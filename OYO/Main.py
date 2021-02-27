@@ -1,8 +1,8 @@
 import streamlit as st
+import pandas as pd
 import pymongo
 import io
-import os
-
+import openpyxl
 
 
 # Save File Function
@@ -16,6 +16,7 @@ def save_uploaded_file(uploadedfile):
 """Run this function to display the Streamlit app"""
 #st.info(__doc__)
 #st.markdown(STYLE, unsafe_allow_html=True)
+global df
 navigation=st.sidebar.radio("Go to",["Dashboard","Upload Invoice","Create Expense Doc", "Create Km File"])
 if navigation == "Upload Invoice" :
     #@st.cache
@@ -32,19 +33,22 @@ if navigation == "Upload Invoice" :
     #st.write(invoice_details)
 
 
-    uploaded_file = st.file_uploader("Upload FIle", type=['pdf','csv'])
+    uploaded_file = st.file_uploader("Upload FIle", type=['pdf','csv' , 'xlsx'])
     #print(uploaded_file)
 
     if uploaded_file is not  None:
-        st.write(" file uploaded")
-        file_details = {"FileName": uploaded_file.name, "FileType": uploaded_file.type, "FileSize": uploaded_file.size}
-        st.write(file_details)
-        # save_uploaded_file( uploaded_file.name )
-        with open( uploaded_file.name, 'r' ) as csvfile:
-            content = csvfile.read().splitlines()
-            for row in content :
-                row_data: row.split(",")
-                print(row_data[0])
+        st.write(" Sucess file uploaded")
+        try:
+            df = pd.read_csv(uploaded_file)
+        except Exception as e:
+            print(e)
+            df =pd.read_excel(uploaded_file)
+
+    try:
+        st.write(df)
+    except Exception as e:
+        print(e)
+        st.write("Please Upload File")
 
 
 
