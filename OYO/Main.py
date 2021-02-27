@@ -18,6 +18,7 @@ import Datamongo
 #st.info(__doc__)
 #st.markdown(STYLE, unsafe_allow_html=True)
 navigation=st.sidebar.radio("Go to",["Contactos","EFatura","Criar Documento",])
+global df1 , df2
 if navigation =="EFatura":
     # List Declaration
     efatura_header = ['Setor', 'Comerciante', 'Tipo', 'Situação', 'Nº Fatura', 'Código Controlo', 'Data Emissão','IVA', 'Valor Total', 'Registado por Comerciante', 'Registado por Consumidor']
@@ -38,27 +39,31 @@ if navigation =="EFatura":
         st.write(df1)
         #st.write(len(df))
         # Save dataframe on db2021
-        b_save = st.button('Start Game')
+        b_save = st.button('Save')
 
         if  b_save ==True:
 
-            df2 = pd.read_excel('C:/test/db/db2021.xlsx')  # Read Destination File
-
+            df2= pd.read_excel('C:/test/db/db2021.xlsx')  # Read Destination File
+            st.write(df2)
             # Create a Pandas Excel writer using XlsxWriter as the engine.
-            writer = pd.ExcelWriter('C:/test/db/db2021.xlsx', engine='openpyxl')
+            #writer = pd.ExcelWriter('C:/test/db/db2021.xlsx', engine='openpyxl')
 
             i=1
             for i in range(len(df1)):
-                df1_data = (df1.at[i, efatura_details[4]])  # Data from Uploaded File
+                df1_data = (df1.at[i, efatura_header[4]])  # Data from Uploaded File
+                st.write(i)
+                st.write(df1_data)
                 for i in range(len(df2)):
                     df2_data = (df2.at[i, db_header[1]])  # Data from database
-                    if   df1_data == df2_data:
-                        break
+                    st.write(df2_data)
                 # initialize list of lists
-                df3_data = [int(sizedf2+1),'1','2','3','4','5','6','7','8','9','10','11','12'] # Create Dataframe Strucure
-                df3 = pd.DataFrame(df3_data)
-                df3.to_excel(writer, sheet_name='Sheet1')
-            writer.save()
+                df3_data = [int(len(df2)+1),'1','2','3','4','5','6','7','8','9','10','11','12'] # Create Dataframe Strucure
+                df3 = pd.DataFrame(df3_data, columns= db_header )
+                st.write( df3_data)
+                #st.write
+                #df3.to_excel(writer, sheet_name='Sheet1')
+
+            #writer.save()
 
             #
             #    df.loc[[i]].to_excel('C:/test/db/db2022.xlsx',
@@ -67,7 +72,6 @@ if navigation =="EFatura":
             #                       mode='a')
     except Exception as e:
         print(e)
-        i = 0
         #st.write("Please Upload File")
         st.info("Please Upload File")
 
